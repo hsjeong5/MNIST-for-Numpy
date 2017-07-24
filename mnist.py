@@ -39,4 +39,4 @@ def load():
     return mnist["training_images"], mnist["training_labels"], mnist["test_images"], mnist["test_labels"]
 
 if __name__ == '__main__':
-    init_mnist()
+    init()
