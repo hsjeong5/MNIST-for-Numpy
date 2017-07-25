@@ -24,7 +24,7 @@ mnist.init()
 **init()** consists of 2-steps.
 
 1. Download the MNIST database.
-2. Make it into numpy arrays and save it into Pickle. (`mnist.pkl`)
+2. Make it into numpy arrays and save it as Pickle. (`mnist.pkl`)
 
 You can do this in command line tools as well.
 
