@@ -5,7 +5,7 @@ The MNIST database of handwritten digits has 60,000 training examples, and 10,00
 This Python module makes it easy to load the MNIST database into numpy arrays.
 For more details about the MNIST database, please visit [here](http://yann.lecun.com/exdb/mnist/index.html).
 
-## Prerequisites
+## Requirements
 
 - Python 3.x
 - Numpy
