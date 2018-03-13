@@ -16,7 +16,7 @@ For more details about the MNIST database, please visit [here](http://yann.lecun
 ## Usage
 
 First, download `mnist.py` from this repository and locate it to your working directory.
-Then you can make your MNIST data to be prepared in Python like below.
+Then you can make your MNIST data to be prepared in Python as follows.
 
 ```python
 import mnist
