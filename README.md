@@ -43,9 +43,9 @@ x_train, t_train, x_test, t_test = mnist.load()
 
 **load()** takes `mnist.pkl` and returns 4 numpy arrays.
 
-- x_train : 60,000x768 numpy array that each row contains flattened version of training images.
+- x_train : 60,000x784 numpy array that each row contains flattened version of training images.
 - t_train : 1x60,000 numpy array that each component is true label of the corresponding training images.
-- x_test : 10,000x768 numpy array that each row contains flattened version of test images.
+- x_test : 10,000x784 numpy array that each row contains flattened version of test images.
 - t_test : 1x10,000 numpy array that each component is true label of the corresponding test images.
 
 ## Notice
