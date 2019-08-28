@@ -56,6 +56,9 @@ def init(dataset_name):
 
 
 def load(dataset_name='MNIST'):
+    if not os.path.exists('data/{}.pkl'.format(dataset_name)):
+        init(dataset_name)
+
     with open("data/{}.pkl".format(dataset_name), 'rb') as f:
         mnist = pickle.load(f)
     return mnist["training_images"], mnist["training_labels"], mnist[
