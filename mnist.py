@@ -19,6 +19,13 @@ url = {
     'KMNIST': 'http://codh.rois.ac.jp/kmnist/dataset/kmnist/'
 }
 
+classes = {
+    'MNIST': ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"),
+    'Fashion-MNIST': ("T-shirt/top", "Trouser", "Pullover", "Dress", "Coat",
+                      "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"),
+    'KMNIST': ('お', 'き', 'す', 'つ', 'な', 'は', 'ま', 'や', 'れ', 'を')
+}
+
 
 def download_mnist(dataset_name):
     base_url = url[dataset_name]
@@ -62,7 +69,7 @@ def load(dataset_name='MNIST'):
     with open("data/{}.pkl".format(dataset_name), 'rb') as f:
         mnist = pickle.load(f)
     return mnist["training_images"], mnist["training_labels"], mnist[
-        "test_images"], mnist["test_labels"]
+        "test_images"], mnist["test_labels"], classes[dataset_name]
 
 
 if __name__ == '__main__':
