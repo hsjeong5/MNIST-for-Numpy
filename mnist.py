@@ -1,3 +1,7 @@
+"""MNIST, Fashion-MNIST and KMNIST loader.
+
+Forked from hsjeong5.
+"""
 import numpy as np
 from urllib import request
 import gzip
@@ -62,12 +66,23 @@ def init(dataset_name):
     save_mnist(dataset_name)
 
 
-def load(dataset_name='MNIST'):
+def vectorize(labels):
+    temp = np.zeros((len(labels), 10))
+    temp[np.arange(len(labels)), labels] = 1
+    return temp
+
+
+def load(dataset_name='MNIST', one_hot=False):
     if not os.path.exists('data/{}.pkl'.format(dataset_name)):
         init(dataset_name)
 
     with open("data/{}.pkl".format(dataset_name), 'rb') as f:
         mnist = pickle.load(f)
+
+    if one_hot:
+        mnist['training_labels'] = vectorize(mnist['training_labels'])
+        mnist['test_labels'] = vectorize(mnist['test_labels'])
+
     return mnist["training_images"], mnist["training_labels"], mnist[
         "test_images"], mnist["test_labels"], classes[dataset_name]
 
