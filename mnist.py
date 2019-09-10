@@ -32,6 +32,7 @@ classes = {
 
 
 def download_mnist(dataset_name):
+    """Download dataset."""
     base_url = url[dataset_name]
     print("Downloading {}...".format(dataset_name))
     for name in filename:
@@ -40,6 +41,7 @@ def download_mnist(dataset_name):
 
 
 def save_mnist(dataset_name):
+    """Save dataset as a .pkl file and remove .gz files."""
     mnist = {}
     for name in filename[:2]:
         with gzip.open(name[1], 'rb') as f:
@@ -67,12 +69,17 @@ def init(dataset_name):
 
 
 def vectorize(labels):
+    """Take an integer encoded array and return a one-hot encoded version."""
     temp = np.zeros((len(labels), 10))
     temp[np.arange(len(labels)), labels] = 1
     return temp
 
 
 def load(dataset_name='MNIST', one_hot=False):
+    """Load dataset as numpy arrays.
+
+    Download dataset if not already available under ./data.
+    """
     if not os.path.exists('data/{}.pkl'.format(dataset_name)):
         init(dataset_name)
 
