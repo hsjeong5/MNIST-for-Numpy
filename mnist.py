@@ -75,7 +75,7 @@ def vectorize(labels):
     return temp
 
 
-def load(dataset_name='MNIST', one_hot=False):
+def load_dataset(dataset_name='MNIST', one_hot=False):
     """Load dataset as numpy arrays.
 
     Download dataset if not already available under ./data.
