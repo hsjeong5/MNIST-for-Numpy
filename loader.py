@@ -95,6 +95,8 @@ def init(dataset_name):
 
     train_x, train_y = x[0:split], y[0:split]
     test_x, test_y = x[split:-1], y[split:-1]
+    train_y = train_y.astype(int)
+    test_y = test_y.astype(int)
 
     dataset = dict(zip(SPLITS, (train_x, test_x, train_y, test_y)))
 
@@ -104,9 +106,9 @@ def init(dataset_name):
     print("Save complete.")
 
 
-def vectorize(labels):
+def vectorize(labels, dataset_name):
     """Take an integer encoded array and return a one-hot encoded version."""
-    temp = np.zeros((len(labels), 10))
+    temp = np.zeros((len(labels), len(CLASSES[dataset_name])))
     temp[np.arange(len(labels)), labels] = 1
     return temp
 
@@ -131,8 +133,8 @@ def load_dataset(dataset_name='MNIST', one_hot=False):
         dataset = pickle.load(f)
 
     if one_hot:
-        dataset['train_y'] = vectorize(dataset['train_y'])
-        dataset['test_y'] = vectorize(dataset['test_y'])
+        dataset['train_y'] = vectorize(dataset['train_y'], dataset_name)
+        dataset['test_y'] = vectorize(dataset['test_y'], dataset_name)
 
     return dataset["train_x"], dataset["train_y"], dataset[
         "test_x"], dataset["test_y"], CLASSES[dataset_name]
