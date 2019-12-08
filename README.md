@@ -20,7 +20,7 @@ First, download `mnist.py` from this repository and locate it to your working di
 You can then load a dataset as follow :
 
 ```python
-from mnist import load_dataset
+from loader import load_dataset
 
 x_train, y_train, x_test, y_test, classes = load_dataset('MNIST')  # either MNIST, Fashion-MNIST or KMNIST
 ```
@@ -38,7 +38,7 @@ The module checks if the relevant .pkl file is already available under ./data. O
 One-hot encoded labels can be retrieved like so:
 
 ```python
-from mnist import load_dataset
+from loader import load_dataset
 
 x_train, y_train, x_test, y_test, classes = load_dataset('KMNIST', one_hot=True)
 ```
