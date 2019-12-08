@@ -1,45 +1,52 @@
 
-# MNIST, KMNIST and Fashion-MNIST for Numpy
+# Datasets for Numpy
 
 ![](mnist_image.png)
-
-The MNIST, KMNIST and Fashion-MNIST datasets have 60,000 training examples, and 10,000 test examples each.
-Each example included in the datasets is a 28x28 grayscale image and its corresponding label(0-9).
-This Python module makes it easy to load the MNIST, KMNIST and Fashion-MNIST datasets into numpy arrays.
-
-For more details about the MNIST dataset, please visit [this link](http://yann.lecun.com/exdb/mnist/index.html).
 
 ## Requirements
 
 - Python 3.x
 - Numpy
 
+## Datasets
+
+- [MNIST](http://yann.lecun.com/exdb/mnist/index.html)
+- [KMNIST](https://github.com/rois-codh/kmnist)
+- [Fashion-MNIST](https://github.com/zalandoresearch/fashion-mnist)
+- [Banknote Authentication](https://archive.ics.uci.edu/ml/datasets/banknote+authentication)
+- [Sonar (Mines vs. Rocks)](http://archive.ics.uci.edu/ml/datasets/connectionist+bench+(sonar,+mines+vs.+rocks)
+- [MHEALTH](https://archive.ics.uci.edu/ml/datasets/MHEALTH+Dataset)
+
 ## Usage
 
-First, download `mnist.py` from this repository and locate it to your working directory.
-You can then load a dataset as follow :
+First, download `loader.py` from this repository and locate it to your working directory.
+You can then load dataset splits into numpy arrays as follows :
 
 ```python
 from loader import load_dataset
 
-x_train, y_train, x_test, y_test, classes = load_dataset('MNIST')  # either MNIST, Fashion-MNIST or KMNIST
+x_train, y_train, x_test, y_test, classes = load_dataset('MNIST')  # either MNIST, Fashion-MNIST, KMNIST, Banknote, Sonar or MHEALTH
 ```
+classes is a tuple of strings representing class names.
 
 The module checks if the relevant .pkl file is already available under ./data. Otherwise, the dataset will be downloaded and processed into a .pkl file.
 
-**load()** takes a .pkl file and returns 5 numpy arrays.
-
-- x_train : 60,000x784 numpy array where each row is a flattened version of of a train image.
-- y_train : 60,000x1 numpy array with integer encoded labels.
-- x_test : 10,000x784 numpy array where each row is a flattened version of of a test image.
-- y_test : 10,000x1 numpy array with integer encoded labels.
-- classes : 10x1 numpy array holding class labels.
-
-One-hot encoded labels can be retrieved like so:
+Labels are integer encoded by default. One-hot encoded labels can be retrieved like so:
 
 ```python
 from loader import load_dataset
 
 x_train, y_train, x_test, y_test, classes = load_dataset('KMNIST', one_hot=True)
 ```
+
+You can change the proportion of samples allocated to training set by specifying the train_prop argument when
+loading datasets for the first time (other than MNIST, KMNIST and Fashion-MNIST, which have predefined test sets). Default is 80 %.
+
+```python
+from loader import load_dataset
+
+x_train, y_train, x_test, y_test, classes = load_dataset('Sonar', train_prop=0.7)
+```
+
+Thanks to hsjeong5 for his work on MNIST-for-Numpy!
 
