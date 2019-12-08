@@ -1,14 +1,20 @@
 """Dataset loader.
 
-Currently supports MNIST, Fashion-MNIST, KMNIST and Banknote.
+Currently supports MNIST, Fashion-MNIST, KMNIST, Banknote, Sonar and MHEALTH
+datasets.
 
-Forked from hsjeong5.
+Forked from hsjeong5 for his work on downloading the MNIST dataset.
 """
 import numpy as np
 from urllib import request
 import gzip
 import pickle
 import os
+import zipfile
+import shutil
+
+SUPPORTED = ['MNIST', 'KMNIST', 'Fashion-MNIST',
+             'Banknote', 'Sonar', 'MHEALTH']
 
 # Split names, will be used as dictionary keys
 SPLITS = ('train_x', 'test_x', 'train_y', 'test_y')
@@ -30,7 +36,9 @@ URL = {
     'Banknote': 'http://archive.ics.uci.edu/ml/machine-learning-databases'
                 '/00267/data_banknote_authentication.txt',
     'Sonar': 'http://archive.ics.uci.edu/ml/machine-learning-databases'
-             '/undocumented/connectionist-bench/sonar/sonar.all-data'
+             '/undocumented/connectionist-bench/sonar/sonar.all-data',
+    'MHEALTH': 'https://archive.ics.uci.edu/ml/machine-learning-databases'
+               '/00319/MHEALTHDATASET.zip'
 }
 
 # Class names. Order follows integer encoding in datasets
@@ -40,7 +48,22 @@ CLASSES = {
                       "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"),
     'KMNIST': ('お', 'き', 'す', 'つ', 'な', 'は', 'ま', 'や', 'れ', 'を'),
     'Banknote': ('Genuine', 'Forged'),
-    'Sonar': ('Mine', 'Rock')
+    'Sonar': ('Mine', 'Rock'),
+    'MHEALTH': (
+        'null',
+        'Standing still (1 min)',
+        'Sitting and relaxing (1 min)',
+        'Lying down (1 min)',
+        'Walking (1 min)',
+        'Climbing stairs (1 min)',
+        'Waist bends forward (20x)',
+        'Frontal elevation of arms (20x)',
+        'Knees bending (crouching) (20x)',
+        'Cycling (1 min)',
+        'Jogging (1 min)',
+        'Running (1 min)',
+        'Jump front & back (20x)'
+    )
 }
 
 
@@ -83,7 +106,7 @@ def init_mnist(dataset_name):
     save_mnist(dataset_name)
 
 
-def init(dataset_name):
+def init(dataset_name, train_prop):
     if not os.path.exists('./data'):
         os.mkdir('./data')
 
@@ -102,13 +125,28 @@ def init(dataset_name):
 
         data = np.genfromtxt('temp.txt', delimiter=',')
         os.remove('temp.txt')
+    elif dataset_name is 'MHEALTH':
+        # Rertrive and extract file
+        request.urlretrieve(URL[dataset_name], "temp.zip")
+        with zipfile.ZipFile('temp.zip', 'r') as zip_ref:
+            zip_ref.extractall()
+
+        # Load data for all patients
+        patients = [np.genfromtxt('MHEALTHDATASET/mHealth_subject{}.log'
+                                  .format(i),
+                                  delimiter='	') for i in range(1, 11)]
+        data = np.concatenate(patients)
+
+        # Remove temp files
+        os.remove('temp.zip')
+        shutil.rmtree('MHEALTHDATASET')
     else:
         data = np.genfromtxt(data, delimiter=',')
 
     np.random.shuffle(data)
 
     x, y = data[:, :-1], data[:, -1]
-    split = int(0.8 * x.shape[0])  # 80 % to train split
+    split = int(train_prop * x.shape[0])
 
     train_x, train_y = x[0:split], y[0:split]
     test_x, test_y = x[split:-1], y[split:-1]
@@ -130,20 +168,30 @@ def vectorize(labels, dataset_name):
     return temp
 
 
-def load_dataset(dataset_name='MNIST', one_hot=False):
+def load_dataset(dataset_name='MNIST', train_prop=None, one_hot=False):
     """Load dataset as numpy arrays.
 
     Download dataset if not already available under ./data.
     """
-    if dataset_name in ['MNIST', 'KMNIST', 'Fashion-MNIST']:
-        if not os.path.exists('data/{}.pkl'.format(dataset_name)):
+    if dataset_name not in SUPPORTED:
+        raise Exception('{} is not supported.'.format(dataset_name))
+
+    if not os.path.exists('data/{}.pkl'.format(dataset_name)):
+        if dataset_name in ['MNIST', 'KMNIST', 'Fashion-MNIST']:
+            if train_prop is not None:
+                print('Warning! MNIST datasets ignore '
+                      'the train_prop argument.')
             init_mnist(dataset_name)
 
-    elif dataset_name in ['Banknote', 'Sonar']:
-        if not os.path.exists('data/{}.pkl'.format(dataset_name)):
-            init(dataset_name)
-    else:
-        raise Exception('Dataset is not supported.')
+        elif dataset_name in ['Banknote', 'Sonar', 'MHEALTH']:
+            if train_prop is None:
+                train_prop = 0.8
+            init(dataset_name, train_prop)
+
+    elif train_prop is not None:
+        raise Exception('train_prop should only be used when initializing '
+                        'dataset. Please delete the .pkl file in the data '
+                        'directory and try again.')
 
     # Load data
     with open("data/{}.pkl".format(dataset_name), 'rb') as f:
