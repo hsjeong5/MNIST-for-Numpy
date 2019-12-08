@@ -28,7 +28,9 @@ URL = {
                      '.com/',
     'KMNIST': 'http://codh.rois.ac.jp/kmnist/dataset/kmnist/',
     'Banknote': 'http://archive.ics.uci.edu/ml/machine-learning-databases'
-                '/00267/data_banknote_authentication.txt'
+                '/00267/data_banknote_authentication.txt',
+    'Sonar': 'http://archive.ics.uci.edu/ml/machine-learning-databases'
+             '/undocumented/connectionist-bench/sonar/sonar.all-data'
 }
 
 # Class names. Order follows integer encoding in datasets
@@ -37,7 +39,8 @@ CLASSES = {
     'Fashion-MNIST': ("T-shirt/top", "Trouser", "Pullover", "Dress", "Coat",
                       "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"),
     'KMNIST': ('お', 'き', 'す', 'つ', 'な', 'は', 'ま', 'や', 'れ', 'を'),
-    'Banknote': ('Genuine', 'Forged')
+    'Banknote': ('Genuine', 'Forged'),
+    'Sonar': ('Mine', 'Rock')
 }
 
 
@@ -87,7 +90,21 @@ def init(dataset_name):
     print("Downloading {}...".format(dataset_name))
     data = request.urlopen(URL[dataset_name])
 
-    data = np.genfromtxt(data, delimiter=',')
+    if dataset_name is 'Sonar':
+        html_response = data.read()
+        encoding = data.headers.get_content_charset('utf-8')
+        data = html_response.decode(encoding)
+        data = data.replace('M', '0')
+        data = data.replace('R', '1')
+
+        with open('temp.txt', 'w') as temp:
+            temp.write(data)
+
+        data = np.genfromtxt('temp.txt', delimiter=',')
+        os.remove('temp.txt')
+    else:
+        data = np.genfromtxt(data, delimiter=',')
+
     np.random.shuffle(data)
 
     x, y = data[:, :-1], data[:, -1]
@@ -122,7 +139,7 @@ def load_dataset(dataset_name='MNIST', one_hot=False):
         if not os.path.exists('data/{}.pkl'.format(dataset_name)):
             init_mnist(dataset_name)
 
-    elif dataset_name in ['Banknote']:
+    elif dataset_name in ['Banknote', 'Sonar']:
         if not os.path.exists('data/{}.pkl'.format(dataset_name)):
             init(dataset_name)
     else:
