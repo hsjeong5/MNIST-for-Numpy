@@ -1,53 +1,52 @@
 
-# MNIST for Numpy
+# Datasets for Numpy
 
 ![](mnist_image.png)
-
-The MNIST database of handwritten digits has 60,000 training examples, and 10,000 test examples.
-Each example included in the MNIST database is a 28x28 grayscale image of handwritten digit and its corresponding label(0-9).
-This Python module makes it easy to load the MNIST database into numpy arrays.
-For more details about the MNIST database, please visit [here](http://yann.lecun.com/exdb/mnist/index.html).
 
 ## Requirements
 
 - Python 3.x
 - Numpy
 
+## Datasets
+
+- [MNIST](http://yann.lecun.com/exdb/mnist/index.html)
+- [KMNIST](https://github.com/rois-codh/kmnist)
+- [Fashion-MNIST](https://github.com/zalandoresearch/fashion-mnist)
+- [Banknote Authentication](https://archive.ics.uci.edu/ml/datasets/banknote+authentication)
+- [Sonar (Mines vs. Rocks)](http://archive.ics.uci.edu/ml/datasets/connectionist+bench+(sonar,+mines+vs.+rocks)
+- [MHEALTH](https://archive.ics.uci.edu/ml/datasets/MHEALTH+Dataset)
+
 ## Usage
 
-First, download `mnist.py` from this repository and locate it to your working directory.
-Then you can make your MNIST data to be prepared in Python as follows.
+First, download `loader.py` from this repository and locate it to your working directory.
+You can then load dataset splits into numpy arrays as follows :
 
 ```python
-import mnist
+from loader import load_dataset
 
-mnist.init()
+x_train, y_train, x_test, y_test, classes = load_dataset('MNIST')  # either MNIST, Fashion-MNIST, KMNIST, Banknote, Sonar or MHEALTH
 ```
+classes is a tuple of strings representing class names.
 
-**init()** consists of 2-steps.
+The module checks if the relevant .pkl file is already available under ./data. Otherwise, the dataset will be downloaded and processed into a .pkl file.
 
-1. Download the MNIST database.
-2. Make it into numpy arrays and save it as Pickle. (`mnist.pkl`)
-
-You can do this in command line tools as well.
-
-```sh
-$ python3 mnist.py
-```
-
-After preparing, you can load the MNIST database into numpy array like this.
+Labels are integer encoded by default. One-hot encoded labels can be retrieved like so:
 
 ```python
-x_train, t_train, x_test, t_test = mnist.load()
+from loader import load_dataset
+
+x_train, y_train, x_test, y_test, classes = load_dataset('KMNIST', one_hot=True)
 ```
 
-**load()** takes `mnist.pkl` and returns 4 numpy arrays.
+You can change the proportion of samples allocated to training set by specifying the train_prop argument when
+loading datasets for the first time (other than MNIST, KMNIST and Fashion-MNIST, which have predefined test sets). Default is 80 %.
 
-- x_train : 60,000x784 numpy array that each row contains flattened version of training images.
-- t_train : 1x60,000 numpy array that each component is true label of the corresponding training images.
-- x_test : 10,000x784 numpy array that each row contains flattened version of test images.
-- t_test : 1x10,000 numpy array that each component is true label of the corresponding test images.
+```python
+from loader import load_dataset
 
-## Notice
+x_train, y_train, x_test, y_test, classes = load_dataset('Sonar', train_prop=0.7)
+```
 
-Once you get `mnist.pkl`, you don't need to call **init()** anymore. Everything you need to do is to locate `mnist.py` and `mnist.pkl` in your working directory and to call **load()**.
+Thanks to hsjeong5 for his work on MNIST-for-Numpy!
+
