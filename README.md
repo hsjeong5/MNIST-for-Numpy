@@ -35,7 +35,7 @@ You can do this in command line tools as well.
 $ python3 mnist.py
 ```
 
-After preparing, you can load the MNIST database into numpy array like this.
+After preparing, you can load the MNIST database into numpy array as follows.
 
 ```python
 x_train, t_train, x_test, t_test = mnist.load()
@@ -47,6 +47,28 @@ x_train, t_train, x_test, t_test = mnist.load()
 - t_train : 1x60,000 numpy array that each component is true label of the corresponding training images.
 - x_test : 10,000x784 numpy array that each row contains flattened version of test images.
 - t_test : 1x10,000 numpy array that each component is true label of the corresponding test images.
+
+
+## Visualization
+
+If you want to visualize each image in *x_train* and *x_test*, you can use the following methods.
+
+For PIL (Python Imaging Library or Pillow) : 
+```python
+from PIL import Image
+
+img = Image.fromarray(x_train[0,:].reshape(28,28)) # First image in the training set.
+img.show() # Show the image
+```
+
+For Matplotlib :
+```python
+import matplotlib.pyplot as plt
+
+img = x_train[0,:].reshape(28,28) # First image in the training set.
+plt.imshow(img,cmap='gray')
+plt.show() # Show the image
+```
 
 ## Notice
 
